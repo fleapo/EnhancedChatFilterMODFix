@@ -330,6 +330,10 @@ local function filterdWords(self,event,msg,player,_,_,_,flags,_,_,_,_,lineID,...
 	if lineID == prevLineID then
 		return filterResult
 	else
+		--避免自己被过滤
+		local trimmedPlayer = Ambiguate(player, "none")
+		if UnitIsUnit(trimmedPlayer,"player") then return end
+		
 		prevLineID, filterResult = lineID, nil
 		--从数据库读取黑名单
 		blacklist = EnhancedChatFilter:GetBlackList(info)
@@ -452,8 +456,8 @@ local function filterdWords(self,event,msg,player,_,_,_,flags,_,_,_,_,lineID,...
 			if type(flags) == "string" and (flags == "GM" or flags == "DEV") then return end
 			--强制刷新一次好友列表
 			ShowFriends()
-			--同工会，自己，同团队，同小队和好友不做处理
-			if allowWisper[trimmedPlayer] or UnitIsInMyGuild(trimmedPlayer) or UnitIsUnit(trimmedPlayer,"player") or UnitInRaid(trimmedPlayer) or UnitInParty(trimmedPlayer) then return end
+			--同工会，同团队，同小队和好友不做处理
+			if allowWisper[trimmedPlayer] or UnitIsInMyGuild(trimmedPlayer) or UnitInRaid(trimmedPlayer) or UnitInParty(trimmedPlayer) then return end
 			--战网好友不做处理
 			for i = 1, select(2, BNGetNumFriends()) do
 				local GameAccount = BNGetNumFriendGameAccounts(i)
