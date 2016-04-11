@@ -204,8 +204,8 @@ function EnhancedChatFilter:GetBlackList(info)
 	return self.db.profile.blackList;
 end;
 
-function EnhancedChatFilter:InsertBlackList(info, value,typeModus)
-	table.insert(self.db.profile.blackList,{value,typeModus})
+function EnhancedChatFilter:InsertBlackList(info, value)
+	table.insert(self.db.profile.blackList,{value})
 end;
 
 function EnhancedChatFilter:RemoveFromBlackList(info, index)
@@ -370,26 +370,10 @@ local function filterdWords(self,event,msg,player,_,_,_,flags,_,_,_,_,lineID,...
 		local numEntries, _ = GetNumQuestLogEntries()
 		--从处理过的聊天信息中过滤包含黑名单词语的聊天内容
 		for index, blacklistWord in ipairs(blacklist) do
-			if (blacklistWord[2] == "日常") then
-				haveDailyQuest = nil
-				--检查任务列表是否有这个日常任务而且没有完成
-				for i=1, numEntries do
-					title,_,_,_,_,isCompleted = GetQuestLogTitle(i)
-					if (string.find(title, blacklistWord[1]) and isCompleted ~= 1) then
-						haveDailyQuest = true
-					end
-				end
-				--如果发现日常黑名单，但是玩家没有任务或者已完成，或者玩家已经在队伍团队中，过滤！
-				if (string.find(word,blacklistWord[1]) and (not haveDailyQuest or (UnitInRaid("player") or UnitInParty("player")))) then
-					filterResult = true
-					return true --deletion of message from chat
-				end
-			else
-				--检查常规黑名单
-				if (string.find(word,blacklistWord[1])) then
-					filterResult = true
-					return true --deletion of message from chat
-				end
+			--检查常规黑名单
+			if (string.find(word,blacklistWord[1])) then
+				filterResult = true
+				return true --deletion of message from chat
 			end
 		end
 
@@ -573,10 +557,6 @@ local importButton = CreateFrame("Button", "importButton", blackListFrame, "UIPa
 local exportButton = CreateFrame("Button", "exportButton", blackListFrame, "UIPanelButtonTemplate")
 
 local selectedWord = ""
-local types = {
-	"隐藏",
-	"日常",
-}
 
 local function tablelength(T)
 	local count = 0
@@ -729,38 +709,6 @@ local function BuildUpFrame()
 	blackListFrame:SetBackdrop({bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background", tile = true, tileSize = 16, edgeSize = 16,insets = { left = 4, right = 4, top = 4, bottom = 4 }})
 	blackListFrame:Hide();
 
-	----------------------------------------------
-	--------------dropdown for types--------------
-	blackListWordDrop:SetPoint("RIGHT",blackListFrame,"RIGHT",0,100)
-
-	function OnClick(self)
-		UIDropDownMenu_SetSelectedID(DropDownMenuTest, self:GetID())
-		typeWord = self:GetText();
-		if(newWord ~= nil) and (newWord ~= "") then
-			addButton:Enable()
-		end
-	end
-
-	function initialize(self, level)
-		local info = UIDropDownMenu_CreateInfo()
-		typeWord=types[1]
-
-		for k,v in pairs(types) do
-			info = UIDropDownMenu_CreateInfo()
-			info.text = v
-			info.value = v
-			info.func = OnClick
-			UIDropDownMenu_AddButton(info, level)
-		end
-	end
-
-	UIDropDownMenu_Initialize(DropDownMenuTest, initialize)
-	UIDropDownMenu_SetWidth(DropDownMenuTest, 187);
-	UIDropDownMenu_SetButtonWidth(DropDownMenuTest, 124)
-	UIDropDownMenu_SetSelectedID(DropDownMenuTest, 1)
-	UIDropDownMenu_JustifyText(DropDownMenuTest, "LEFT")
-	-----------------------------------------------------------
-
 	blackListScroll:SetPoint("LEFT",blackListFrame,"LEFT",10,-10)
 	blackListScroll:SetSize(250,300) -- width, height
 	blackListScroll:SetBackdrop({edgeFile = "Interface/Tooltips/UI-Tooltip-Border",tile = true, tileSize = 16, edgeSize = 16,insets = { left = 4, right = 4, top = 4, bottom = 4 }})
@@ -824,9 +772,7 @@ local function BuildUpFrame()
 	blackListWordField:SetScript("OnTextChanged", function(self,userinput)
 		if(userinput == true) then
 			newWord = self:GetText();
-			if(typeWord ~= nil) and (typeWord ~= "") then
-				addButton:Enable()
-			end
+			addButton:Enable()
 		end
 	end)
 
@@ -837,7 +783,7 @@ local function BuildUpFrame()
 	blackListWordIOField:SetAutoFocus(false)
 	blackListWordIOField:SetScript("OnTextChanged", function(self)
 			newWord = self:GetText();
-			if(typeWord ~= nil) and (typeWord ~= "") and (self:HasFocus()) then
+			if (self:HasFocus()) then
 				importButton:Enable()
 			end
 	end)
@@ -869,11 +815,11 @@ local function BuildUpFrame()
 		end
 
 		local newBlackList = { strsplit("|", importString) }
-		local imNewWord, imTypeWord = "", ""
+		local imNewWord = ""
 		for _, blacklist in ipairs(newBlackList) do
 			if (blacklist ~= nil and blacklist ~= "") then
-				imNewWord, imTypeWord = strsplit(",",blacklist)
-				EnhancedChatFilter:InsertBlackList(info,imNewWord,imTypeWord)
+				imNewWord = blacklist
+				EnhancedChatFilter:InsertBlackList(info,imNewWord)
 			end
 		end
 		blackListScroll.ScrollFrameUpdate()
@@ -894,7 +840,7 @@ local function BuildUpFrame()
 			_, t2 = gsub(blackWord[1],",","")
 			_, t3 = gsub(blackWord[1],"@","")
 			if (t1 + t2 + t3 == 0) then
-				blackString = blackString..blackWord[1]..","..blackWord[2].."|"
+				blackString = blackString..blackWord[1].."|"
 			else
 				print(blackWord[1].."包含非法字符！已经被忽略！")
 			end
@@ -911,7 +857,7 @@ local function BuildUpFrame()
 	addButton:SetText("添加新关键字")
 	addButton:SetPoint("RIGHT",blackListFrame,"RIGHT",-25,70)
 	addButton:SetScript("OnClick", function()
-		EnhancedChatFilter:InsertBlackList(info,newWord,typeWord)
+		EnhancedChatFilter:InsertBlackList(info,newWord)
 		blackListScroll.ScrollFrameUpdate()
 		blackListWordField:SetText("")
 		newWord = ""
@@ -925,7 +871,7 @@ local function BuildUpFrame()
 	removeButton:SetPoint("LEFT",blackListFrame,"LEFT",10,-175)
 	removeButton:SetScript("OnClick", function()
 		for i, word in ipairs(	EnhancedChatFilter:GetBlackList(info)) do
-			if(selectedWord == word[1].." |cff95a5a6类型: "..word[2]) then
+			if(selectedWord == word[1]) then
 				unlockHighlight()
 				EnhancedChatFilter:RemoveFromBlackList(info, i)
 				blackListScroll.ScrollFrameUpdate()
@@ -963,16 +909,16 @@ local function BuildUpFrame()
 		local newBlackList = {}
 
 		for _,v in ipairs(blacklist) do
-		   if (not hashWord[v[1]..v[2]]) then
-			   newBlackList[#newBlackList+1] = { v[1], v[2] }
-			   hashWord[v[1]..v[2]] = true
+		   if (not hashWord[v[1]]) then
+			   newBlackList[#newBlackList+1] = {v[1]}
+			   hashWord[v[1]] = true
 		   end
 		end
 
 		EnhancedChatFilter:ClearBlackList(info)
 
 		for _,v in ipairs(newBlackList) do
-			EnhancedChatFilter:InsertBlackList(info,v[1],v[2])
+			EnhancedChatFilter:InsertBlackList(info,v[1])
 		end
 
 		blackListScroll.ScrollFrameUpdate()
@@ -1082,7 +1028,7 @@ function blackListScroll.ScrollFrameUpdate()
 		if idx<=tablelength(EnhancedChatFilter:GetBlackList(info)) then
 			blackListScroll.list[i].name:SetPoint("LEFT",blackListScroll.list[i],"LEFT",2)
 			blackListScroll.list[i].name:SetTextColor(1,1,1)
-			blackListScroll.list[i].name:SetText(EnhancedChatFilter:GetBlackList(info)[idx][1].." |cff95a5a6类型: ".. EnhancedChatFilter:GetBlackList(info)[idx][2])
+			blackListScroll.list[i].name:SetText(EnhancedChatFilter:GetBlackList(info)[idx][1])
 
 			blackListScroll.list[i]:Show()
 		else
