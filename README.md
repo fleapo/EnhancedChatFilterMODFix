@@ -4,9 +4,9 @@ EnhancedChatFilter modded for Chinese users
 About
 -----
 
-The original project is here: http://bbs.ngacn.cc/read.php?tid=7527032 by szpunk, which is abondoned.<br />
+The original project is here: <http://bbs.ngacn.cc/read.php?tid=7527032> by szpunk, which is abondoned.<br />
 However in 6.2.4 patch, some APIs have been removed. so I decided to fix those errors.<br />
-原项目见http://bbs.ngacn.cc/read.php?tid=7527032，作者为szpunk。<br />
+原项目见<http://bbs.ngacn.cc/read.php?tid=7527032>，作者为szpunk。<br />
 由于原作者不再更新，而且6.2.4的补丁中更改了部分API，所以我把修复过的放在这里。<br />
 
 Please notice that I am not a lua programmer, there won't be code improments.<br />
