@@ -1,12 +1,15 @@
 # EnhancedChatFilterMODFix
-EnhancedChatFilter modded for Chinese users
+EnhancedChatFilter, a WoW chat addon, modded for Chinese users
 
 About
 -----
 
-The original project is here: http://bbs.ngacn.cc/read.php?tid=7527032 by szpunk, which is abondoned.<br />
-However in 6.2.4 patch, some APIs have been removed. so I decided to fix those errors.<br />
-原项目见http://bbs.ngacn.cc/read.php?tid=7527032，作者为szpunk。<br />
+This is a WoW chat filter addon mainly for chinese servers.<br />
+这是一个适用于国服魔兽世界的聊天屏蔽插件。<br />
+
+The original project, which is abondoned, can be found here: <http://bbs.ngacn.cc/read.php?tid=7527032> by szpunk.<br />
+However in patch 6.2.4, some APIs have been removed. so I decided to fix those errors.<br />
+原项目见<http://bbs.ngacn.cc/read.php?tid=7527032>，作者为szpunk。<br />
 由于原作者不再更新，而且6.2.4的补丁中更改了部分API，所以我把修复过的放在这里。<br />
 
 Please notice that I am not a lua programmer, there won't be code improments.<br />
@@ -32,4 +35,4 @@ Well, times change, no need for that.
 There is no derict API. There are other ways though, but the original author didn't write this part.
 
 3. Why you write this page in english and this addon in Chinese?<br />
-Goood question! I just don't how to write a mutilanguage addon. Maybe you can help?
+Good question! I just don't how to write a mutilanguage addon. Maybe you can help?
