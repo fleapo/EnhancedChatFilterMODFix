@@ -342,7 +342,6 @@ local function filterdWords(self,event,msg,player,_,_,_,flags,_,_,_,_,lineID,...
 		--如果扩展屏蔽列表功能开启
 		if(EnhancedChatFilter:GetEnableIGM(info) == true) then
 			ignoreMoreList = EnhancedChatFilter:GetIgnoreMoreList(info)
-			local trimmedPlayer = Ambiguate(player, "none")
 			for index,ignorePlayer in ipairs(ignoreMoreList) do
 				if (trimmedPlayer == ignorePlayer[1]) then
 					if debugMode then print(trimmedPlayer.." Muted~!") end
@@ -369,9 +368,6 @@ local function filterdWords(self,event,msg,player,_,_,_,flags,_,_,_,_,lineID,...
 		--删除 UTF-8 干扰符
 		local word = utf8replace(filterString, UTF8Symbols)
 
-		--初始化任务状态
-		local haveDailyQuest, title, isCompleted = nil, nil, nil
-		local numEntries, _ = GetNumQuestLogEntries()
 		--从处理过的聊天信息中过滤包含黑名单词语的聊天内容
 		for index, blacklistWord in ipairs(blacklist) do
 			--检查常规黑名单
@@ -451,7 +447,6 @@ local function filterdWords(self,event,msg,player,_,_,_,flags,_,_,_,_,lineID,...
 		--如果密语过滤功能开启
 		if (EnhancedChatFilter:GetEnableWisper() == true and event == "CHAT_MSG_WHISPER") then
 			--从聊天信息获取到的： player = playerName - realmName, 我们要移除 realmName
-			local trimmedPlayer = Ambiguate(player, "none")
 			--对 GM 和 DEV 的密语不做处理
 			if type(flags) == "string" and (flags == "GM" or flags == "DEV") then return end
 			--强制刷新一次好友列表
@@ -462,7 +457,7 @@ local function filterdWords(self,event,msg,player,_,_,_,flags,_,_,_,_,lineID,...
 			for i = 1, select(2, BNGetNumFriends()) do
 				local GameAccount = BNGetNumFriendGameAccounts(i)
 				for j = 1, GameAccount do
-					local rFocus, rName, rGame = BNGetFriendGameAccountInfo(i, j)
+					local rName, rGame = BNGetFriendGameAccountInfo(i, j)
 					if (rName == trimmedPlayer and rGame == "WoW") then return end
 				end
 			end
@@ -701,7 +696,6 @@ end
 local function unlockHighlight()
 	local offset = FauxScrollFrame_GetOffset(blackListScroll.scrollFrame)
 	for i=1,14 do
-		local idx = offset+i
 		blackListScroll.list[i]:UnlockHighlight()
 	end
 end
@@ -798,15 +792,13 @@ local function BuildUpFrame()
 	importButton:SetPoint("BOTTOMLEFT",blackListFrame,"BOTTOMLEFT",315,-30)
 	importButton:SetScript("OnClick", function()
 		local importString = blackListWordIOField:GetText()
-		local newBlackList = {}
-		local oldHashString, newHashString = "", ""
-		local crcCheck = nil
 		if (importString == "") then
 			print("导入字符串为空！请检查后重试！")
 			return
 		end
 
 		if (string.find(importString, "@")) then
+			local oldHashString, newHashString = "", ""
 			importString, newHashString = strsplit("@", importString)
 			newHashString = tonumber(newHashString)
 			oldHashString = tonumber(StringHash(importString))
