@@ -342,7 +342,7 @@ local function filterdWords(self,event,msg,player,_,_,_,flags,_,_,_,_,lineID,...
 		--如果扩展屏蔽列表功能开启
 		if(EnhancedChatFilter:GetEnableIGM(info) == true) then
 			ignoreMoreList = EnhancedChatFilter:GetIgnoreMoreList(info)
-			for index,ignorePlayer in ipairs(ignoreMoreList) do
+			for _,ignorePlayer in ipairs(ignoreMoreList) do
 				if (trimmedPlayer == ignorePlayer[1]) then
 					if debugMode then print(trimmedPlayer.." Muted~!") end
 					filterResult = true
@@ -369,7 +369,7 @@ local function filterdWords(self,event,msg,player,_,_,_,flags,_,_,_,_,lineID,...
 		local word = utf8replace(filterString, UTF8Symbols)
 
 		--从处理过的聊天信息中过滤包含黑名单词语的聊天内容
-		for index, blacklistWord in ipairs(blacklist) do
+		for _, blacklistWord in ipairs(blacklist) do
 			--检查常规黑名单
 			if (string.find(word,blacklistWord[1])) then
 				filterResult = true
@@ -457,7 +457,7 @@ local function filterdWords(self,event,msg,player,_,_,_,flags,_,_,_,_,lineID,...
 			for i = 1, select(2, BNGetNumFriends()) do
 				local GameAccount = BNGetNumFriendGameAccounts(i)
 				for j = 1, GameAccount do
-					local rName, rGame = BNGetFriendGameAccountInfo(i, j)
+					local _, rName, rGame = BNGetFriendGameAccountInfo(i, j)
 					if (rName == trimmedPlayer and rGame == "WoW") then return end
 				end
 			end
@@ -866,7 +866,7 @@ local function BuildUpFrame()
 	removeButton:SetText("移除")
 	removeButton:SetPoint("LEFT",blackListFrame,"LEFT",10,-175)
 	removeButton:SetScript("OnClick", function()
-		for i, word in ipairs(	EnhancedChatFilter:GetBlackList(info)) do
+		for i, word in ipairs(EnhancedChatFilter:GetBlackList(info)) do
 			if(selectedWord == word[1]) then
 				unlockHighlight()
 				EnhancedChatFilter:RemoveFromBlackList(info, i)
@@ -1070,7 +1070,7 @@ end
 function EnhancedChatFilter:EnhancedChatFilterIgnoreMoreList()
 	local ignoreMoreList = EnhancedChatFilter:GetIgnoreMoreList(info)
 	print("扩展屏蔽名单列表： \n")
-	for index,ignorePlayer in ipairs(ignoreMoreList) do
+	for _,ignorePlayer in ipairs(ignoreMoreList) do
 		print(ignorePlayer[1])
 	end
 end
