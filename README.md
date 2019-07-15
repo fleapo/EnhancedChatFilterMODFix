@@ -7,7 +7,7 @@ About
 This is a WoW chat filter addon mainly for chinese servers.<br />
 这是一个适用于国服魔兽世界的聊天屏蔽插件。<br />
 
-The original project, which is abondoned, can be found here: <http://bbs.ngacn.cc/read.php?tid=7527032> by szpunk.<br />
+The original project, which is abandoned, can be found here: <http://bbs.ngacn.cc/read.php?tid=7527032> by szpunk.<br />
 However in patch 6.2.4, some APIs have been removed. so I decided to fix those errors.<br />
 原项目见<http://bbs.ngacn.cc/read.php?tid=7527032>，作者为szpunk。<br />
 由于原作者不再更新，而且6.2.4的补丁中更改了部分API，所以我把修复过的放在这里。<br />
